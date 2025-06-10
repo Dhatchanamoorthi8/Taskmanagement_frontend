@@ -62,15 +62,25 @@ export const EditUserForm = ({ userToEdit }) => {
 
   console.log(isDirty, 'isDirty')
 
+  // useEffect(() => {
+  //   const currentEmail = form.watch('email')
+  //   setEmailChanged(currentEmail !== originalEmail)
+  //   if (currentEmail !== originalEmail) {
+  //     setOtpVerified(false)
+  //   } else {
+  //     setOtpVerified(true)
+  //   }
+  // }, [form.watch('email'), originalEmail])
+
   useEffect(() => {
-    const currentEmail = form.watch('email')
-    setEmailChanged(currentEmail !== originalEmail)
-    if (currentEmail !== originalEmail) {
-      setOtpVerified(false)
-    } else {
-      setOtpVerified(true)
-    }
-  }, [form.watch('email'), originalEmail])
+    const subscription = form.watch(value => {
+      const currentEmail = value.email
+      setEmailChanged(currentEmail !== originalEmail)
+      setOtpVerified(currentEmail === originalEmail)
+    })
+
+    return () => subscription.unsubscribe()
+  }, [form, originalEmail])
 
   useEffect(() => {
     if (isSubmitting) {

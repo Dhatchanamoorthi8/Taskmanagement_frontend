@@ -51,6 +51,7 @@ import {
 import { useUser, setUserContext } from '@/lib/UserContext'
 import { updateUserProfile } from '@/services/userService'
 import { toast } from 'sonner'
+import Image from 'next/image'
 
 const formSchema = z.object({
   fullName: z.string().min(2, 'Full name must be at least 2 characters'),
@@ -154,10 +155,18 @@ export default function EditProfileForm ({ profileData }) {
                             : 'border-transparent'
                         }`}
                       >
-                        <img
+                        {/* <img
                           src={`/avatars/${avatar.source}`}
                           alt={`Avatar ${avatar.id}`}
                           className='rounded-full'
+                        /> */}
+                        <Image
+                          src={`/avatars/${avatar.source}`}
+                          alt={`Avatar ${avatar.id}`}
+                          width={64} // You can adjust these sizes as needed
+                          height={64}
+                          className='rounded-full'
+                          loading='lazy'
                         />
                       </button>
                     )

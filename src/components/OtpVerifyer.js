@@ -56,7 +56,7 @@ export function OtpVerifyer ({ email, onVerified, emailexists }) {
           toast.error(err.message)
         })
     }
-  }, [open, email])
+  }, [open, email, emailexists])
 
   const onSubmit = async data => {
     try {

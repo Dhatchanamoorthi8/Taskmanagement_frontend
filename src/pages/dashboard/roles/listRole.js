@@ -36,7 +36,7 @@ export default function ListRolePage () {
     }
 
     fetchData()
-  }, [])
+  }, [user.companyId])
 
   const filteredData = useMemo(() => {
     return data.filter(project => {

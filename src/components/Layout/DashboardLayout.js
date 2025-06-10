@@ -17,7 +17,7 @@ const DashboardLayout = ({ children }) => {
       const decodedRole = decodeRole(token)
       setRole(decodedRole)
     }
-  }, [])
+  }, [router])
 
   if (!role) return null
 

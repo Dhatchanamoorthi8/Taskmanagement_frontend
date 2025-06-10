@@ -44,7 +44,6 @@ export default function RoleFormEdit ({ companyId, roleId }) {
     const loadRoleData = async () => {
       try {
         const role = await fetchRoleById(roleId, companyId)
-
         const permissions = role.permissions || role.Permissions || []
         form.reset({
           roleName: role.name,
@@ -60,7 +59,7 @@ export default function RoleFormEdit ({ companyId, roleId }) {
     if (roleId) {
       loadRoleData()
     }
-  }, [roleId, companyId])
+  }, [roleId, companyId, form])
 
   const togglePermission = value => {
     const current = form.getValues('permissions')
