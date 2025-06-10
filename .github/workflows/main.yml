@@ -13,6 +13,15 @@ jobs:
     - name: Checkout repo
       uses: actions/checkout@v3
 
+    - name: Install Dependencies
+      run: npm install --legacy-peer-deps
+
+    - name: Verify Installation
+      run: npx next --version
+
+    - name: Build the Application
+      run: npm run build
+
     - name: Deploy to EC2
       uses: appleboy/ssh-action@master
       with:
