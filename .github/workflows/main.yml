@@ -22,6 +22,6 @@ jobs:
         script: |
           cd ${{ secrets.FRONTEND_PATH }}
           git pull origin main
-          npm install
+          npm install --legacy-peer-deps
           npm run build
           # optional: restart Nginx/Apache if needed
