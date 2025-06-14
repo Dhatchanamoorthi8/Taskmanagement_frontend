@@ -7,9 +7,15 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
-import { ArrowUpDown, Edit, MoreHorizontal, RefreshCw, Trash2 } from 'lucide-react'
+import {
+  ArrowUpDown,
+  Edit,
+  MoreHorizontal,
+  RefreshCw,
+  Trash2
+} from 'lucide-react'
 
-export const columns = [
+export const getcompanyColumns = [
   {
     accessorKey: 'srno',
     header: 'Sr.No',

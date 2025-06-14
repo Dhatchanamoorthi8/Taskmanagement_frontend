@@ -50,7 +50,7 @@ export default function App ({ Component, pageProps }) {
           setDate={setDate}
         >
           <NuqsAdapter>
-            {/* {loading && <PageLoader />} */}
+            {loading && <PageLoader />}
             {getLayout(<Component {...pageProps} />)}
           </NuqsAdapter>
         </CalendarProvider>

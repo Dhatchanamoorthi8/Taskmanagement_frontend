@@ -4,7 +4,6 @@ import { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/router'
 import { DataTable } from '@/components/data-table/data-table'
 import { useDataTable } from '@/hooks/use-data-table'
-import { alltaskColumns } from './Table/alltaskColumns'
 import { parseAsArrayOf, parseAsString, useQueryState } from 'nuqs'
 import { DataTableSortList } from '@/components/data-table/data-table-sort-list'
 import { DataTableToolbar } from '@/components/data-table/data-table-toolbar'
@@ -19,6 +18,7 @@ import {
 import CustomToggle from '@/components/CustomToggle'
 import ConfirmDialog from '@/components/ConfirmDialog'
 import { toast } from 'sonner'
+import { alltaskColumns } from '@/components/data-columns/alltaskColumns'
 
 export default function ListAllTaskPage () {
   const [data, setData] = useState([])

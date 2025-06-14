@@ -17,7 +17,7 @@ import { fetchUserById } from '@/services/userService'
 import { useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
-export const ProfileSettings = () => {
+export default function ProfileSettingsPage () {
   const searchParams = useSearchParams()
   const id = searchParams.get('id')
   const companyId = searchParams.get('companyId')

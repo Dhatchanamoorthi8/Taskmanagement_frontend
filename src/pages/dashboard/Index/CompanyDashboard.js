@@ -1,16 +1,9 @@
 import {
   AlertTriangleIcon,
   CalendarIcon,
-  CheckCircle2Icon,
-  CheckCircleIcon,
   CircleCheck,
   ClipboardListIcon,
-  ClockIcon,
-  PauseCircleIcon,
-  RefreshCwIcon,
   Timer,
-  TrendingDownIcon,
-  TrendingUpIcon,
   XCircleIcon
 } from 'lucide-react'
 import TaskCard from '@/components/TaskCard'
@@ -31,8 +24,8 @@ import { DataTable } from '@/components/data-table/data-table'
 import { DataTableToolbar } from '@/components/data-table/data-table-toolbar'
 import { DataTableSortList } from '@/components/data-table/data-table-sort-list'
 import { useDataTable } from '@/hooks/use-data-table'
-import { UserDashboardColumn } from './Table/userColumns'
 import { fetchadminDashboardList } from '@/services/dashboardService'
+import { taskDashboardColumn } from '@/components/data-columns/taskDashboardColumn'
 
 const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL)
 
@@ -42,30 +35,17 @@ var date = new Date(),
 var firstDay = new Date(y, m, 1)
 var lastDay = new Date(y, m + 1, 0)
 
-export function CompanyDashboard () {
+export default function CompanyDashboardPage () {
   const { user } = useUser()
   const userId = user.id
   const companyId = user.companyId
   const [date, setDate] = useState({ from: firstDay, to: lastDay })
   const [taskStats, setTaskStats] = useState(null)
   const prevStatsRef = useRef(null)
+  const lastUsedMoodRef = useRef(null)
 
   const [dialogOpen, setDialogOpen] = useState(false)
-  const [dialogTitle, setDialogTitle] = useState('')
   const [TasksData, setTasksData] = useState([])
-  const calculateTrend = (key, current, previous) => {
-    if (previous == null || previous === 0)
-      return { trend: '+0.0%', trendingUp: true }
-    const diff = current - previous
-    const percent = ((diff / previous) * 100).toFixed(1)
-    const trendingUp = diff >= 0
-    const sign = trendingUp ? '+' : ''
-    return {
-      trend: `${sign}${percent}%`,
-      trendingUp
-    }
-  }
-
 
   useEffect(() => {
     if (!userId || !companyId) return
@@ -107,8 +87,8 @@ export function CompanyDashboard () {
       prevStatsRef.current = newStats
     }
 
-    socket.off('adminTaskStats', handleAdminStats) 
-    socket.on('adminTaskStats', handleAdminStats) 
+    socket.off('adminTaskStats', handleAdminStats)
+    socket.on('adminTaskStats', handleAdminStats)
 
     socket.emit('register', { userId, companyId })
     socket.emit('requestAdminTaskStats', {
@@ -124,19 +104,34 @@ export function CompanyDashboard () {
 
   const handleCardClick = async props => {
     try {
-      const data = await fetchadminDashboardList(props, companyId)
-
-      console.log(data);
-      
+      const data = await fetchadminDashboardList(props, companyId, date)
       setTasksData(data)
-
       setDialogOpen(true)
     } catch (error) {
       console.log(error)
     }
   }
 
-  const columns = UserDashboardColumn()
+  useEffect(() => {
+    if (!dialogOpen || !companyId) return
+
+    const fetchData = async () => {
+      try {
+        const data = await fetchuserDashboardList(
+          lastUsedMoodRef.current,
+          companyId,
+          date
+        )
+        setTasksData(data)
+      } catch (error) {
+        console.error('Error fetching tasks:', error)
+      }
+    }
+
+    fetchData()
+  }, [date, dialogOpen, userId])
+
+  const columns = taskDashboardColumn()
 
   const { table } = useDataTable({
     data: TasksData || [],
@@ -273,7 +268,7 @@ export function CompanyDashboard () {
         />
       </div>
 
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+      {/* <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className='max-w-screen overflow-auto lg:min-w-full lg:h-screen '>
           <div className='bg-background text-foreground p-4 md:p-6'>
             <div className='data-table-container w-full'>
@@ -285,10 +280,63 @@ export function CompanyDashboard () {
             </div>
           </div>
         </DialogContent>
+      </Dialog> */}
+
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent className='max-w-screen overflow-auto lg:min-w-full lg:h-screen p-4'>
+          <div className='flex flex-col gap-4 lg:gap-6'>
+            {/* Top Bar: Date Range Picker */}
+            <div className='flex justify-between items-center'>
+              <div className='flex-shrink-0'>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant='outline'
+                      className={cn(
+                        'w-full lg:w-auto justify-start text-left font-normal',
+                        !date?.from && 'text-muted-foreground'
+                      )}
+                    >
+                      <CalendarIcon className='mr-2 h-4 w-4' />
+                      {date?.from ? (
+                        date.to ? (
+                          <>
+                            {format(date.from, 'LLL dd, y')} -{' '}
+                            {format(date.to, 'LLL dd, y')}
+                          </>
+                        ) : (
+                          format(date.from, 'LLL dd, y')
+                        )
+                      ) : (
+                        <span>Pick a date range</span>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className='w-auto p-0' align='start'>
+                    <Calendar
+                      mode='range'
+                      selected={date}
+                      onSelect={range => setDate(range)}
+                      numberOfMonths={2}
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
+            </div>
+
+            {/* Data Table Section */}
+            <div className='bg-background text-foreground w-full'>
+              <div className='data-table-container w-full'>
+                <DataTable table={table}>
+                  <DataTableToolbar table={table}>
+                    <DataTableSortList table={table} />
+                  </DataTableToolbar>
+                </DataTable>
+              </div>
+            </div>
+          </div>
+        </DialogContent>
       </Dialog>
-
-
-      
     </>
   )
 }

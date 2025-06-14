@@ -12,7 +12,7 @@ import * as RadioGroup from '@radix-ui/react-radio-group'
 import { Check } from 'lucide-react'
 import { useTheme } from 'next-themes'
 
-export const AppearanceSettings = () => {
+export default function AppearanceSettingsPage () {
   const { theme, setTheme } = useTheme()
 
   const themeOptions = [

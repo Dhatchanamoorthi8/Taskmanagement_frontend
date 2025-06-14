@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import { cn } from '@/lib/utils' // Assuming cn is a utility function like classnames or clsx
 import { useUser } from '@/lib/UserContext'
 
-export const SideMenu = () => {
+export const SettingsSideMenu = () => {
   const { user } = useUser()
   const menuItems = [
     {

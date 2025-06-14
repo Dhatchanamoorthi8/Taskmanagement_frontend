@@ -25,7 +25,7 @@ function dateRangeFilterFn (row, id, filterValue) {
   return true
 }
 
-export const UserDashboardColumn = () => [
+export const taskDashboardColumn = () => [
   {
     id: 'select',
     header: ({ table }) => (
@@ -148,7 +148,7 @@ export const UserDashboardColumn = () => [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='Start Date' />
     ),
-    cell: ({ row }) => format(new Date(row.original.startDate), 'dd-mm-yyyy'),
+    cell: ({ row }) => format(new Date(row.original.startDate), 'dd-MM-yyyy'),
     meta: {
       label: 'Created At',
       variant: 'dateRange',
@@ -163,7 +163,7 @@ export const UserDashboardColumn = () => [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='End Date' />
     ),
-    cell: ({ row }) => format(new Date(row.original.endDate), 'dd-mm-yyyy')
+    cell: ({ row }) => format(new Date(row.original.endDate), 'dd-MM-yyyy')
   },
   {
     accessorKey: 'Creator.fullName',

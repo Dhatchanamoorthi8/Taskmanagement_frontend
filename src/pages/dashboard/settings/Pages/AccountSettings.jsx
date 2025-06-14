@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 
-export const AccountSettings = () => {
+export default  function AccountSettingsPage () {
   return (
     <div className='flex flex-col items-center w-full px-4 md:px-6'>
       <div className='w-full max-w-3xl'>

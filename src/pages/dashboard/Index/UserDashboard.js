@@ -1,13 +1,8 @@
 import {
-  CheckCircleIcon,
-  ClockIcon,
   ClipboardListIcon,
   TimerIcon,
-  Loader2Icon,
-  XCircleIcon,
   CalendarIcon,
   PauseCircleIcon,
-  RefreshCwIcon,
   AlertTriangleIcon,
   Timer,
   CircleCheck
@@ -15,19 +10,12 @@ import {
 import { useUser } from '@/lib/UserContext'
 import { useEffect, useRef, useState } from 'react'
 import { io } from 'socket.io-client'
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription
-} from '@/components/ui/dialog'
+import { Dialog, DialogContent } from '@/components/ui/dialog'
 import TaskCard from '@/components/TaskCard'
 import { DataTable } from '@/components/data-table/data-table'
 import { DataTableToolbar } from '@/components/data-table/data-table-toolbar'
 import { DataTableSortList } from '@/components/data-table/data-table-sort-list'
 import { useDataTable } from '@/hooks/use-data-table'
-import { UserDashboardColumn } from './Table/userColumns'
 import {
   Popover,
   PopoverContent,
@@ -38,6 +26,7 @@ import { Calendar } from '@/components/ui/calendar'
 import { cn } from '@/lib/utils'
 import { format } from 'date-fns'
 import { fetchuserDashboardList } from '@/services/dashboardService'
+import { taskDashboardColumn } from '@/components/data-columns/taskDashboardColumn'
 
 const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL)
 
@@ -47,101 +36,16 @@ var date = new Date(),
 var firstDay = new Date(y, m, 1)
 var lastDay = new Date(y, m + 1, 0)
 
-export function UserDashboard () {
+export default function UserDashboardPage () {
   const { user } = useUser()
   const userId = user.id
   const [date, setDate] = useState({ from: firstDay, to: lastDay })
   const [taskStats, setTaskStats] = useState(null)
   const prevStatsRef = useRef(null)
+  const lastUsedMoodRef = useRef(null)
 
   const [dialogOpen, setDialogOpen] = useState(false)
-  const [dialogTitle, setDialogTitle] = useState('')
   const [TasksData, setTasksData] = useState([])
-
-  const calculateTrend = (key, current, previous) => {
-    if (previous == null || previous === 0)
-      return { trend: '+0.0%', trendingUp: true }
-    const diff = current - previous
-    const percent = ((diff / previous) * 100).toFixed(1)
-    const trendingUp = diff >= 0
-    const sign = trendingUp ? '+' : ''
-    return {
-      trend: `${sign}${percent}%`,
-      trendingUp
-    }
-  }
-
-  // useEffect(() => {
-  //   if (!userId) return
-
-  //   // Re-register on reconnect
-  //   socket.on('connect', () => {
-  //     socket.emit('register', userId)
-  //   })
-
-  //   socket.off('taskStats')
-
-  //   socket.emit('register', userId)
-  //   socket.emit('requestTaskStats', {
-  //     userId,
-  //     startDate: date?.from,
-  //     endDate: date?.to
-  //   })
-
-  //   const handleTaskStats = newStats => {
-  //     const prev = prevStatsRef.current || {}
-
-  //     const calculateTrend = (key, current, previous) => {
-  //       const trend =
-  //         current > previous ? 'up' : current < previous ? 'down' : 'same'
-  //       return { trend }
-  //     }
-
-  //     const computed = {
-  //       total: {
-  //         count: newStats.totaltask,
-  //         ...calculateTrend('total', newStats.totaltask, prev.totaltask)
-  //       },
-  //       yet_to_start: {
-  //         count: newStats.yet_to_start,
-  //         ...calculateTrend(
-  //           'yet_to_start',
-  //           newStats.yet_to_start,
-  //           prev.yet_to_start
-  //         )
-  //       },
-  //       in_progress: {
-  //         count: newStats.in_progress,
-  //         ...calculateTrend(
-  //           'in_progress',
-  //           newStats.in_progress,
-  //           prev.in_progress
-  //         )
-  //       },
-  //       completed: {
-  //         count: newStats.completed,
-  //         ...calculateTrend('completed', newStats.completed, prev.completed)
-  //       },
-  //       not_completed: {
-  //         count: newStats.not_completed,
-  //         ...calculateTrend(
-  //           'not_completed',
-  //           newStats.not_completed,
-  //           prev.not_completed
-  //         )
-  //       }
-  //     }
-
-  //     setTaskStats(computed)
-  //     prevStatsRef.current = newStats
-  //   }
-
-  //   socket.on('taskStats', handleTaskStats)
-
-  //   return () => {
-  //     socket.off('taskStats', handleTaskStats)
-  //   }
-  // }, [userId, date])
 
   useEffect(() => {
     if (!userId) return
@@ -220,7 +124,7 @@ export function UserDashboard () {
 
   const handleCardClick = async props => {
     try {
-      const data = await fetchuserDashboardList(props, userId)
+      const data = await fetchuserDashboardList(props, userId, date)
       setTasksData(data)
       setDialogOpen(true)
     } catch (error) {
@@ -228,7 +132,26 @@ export function UserDashboard () {
     }
   }
 
-  const columns = UserDashboardColumn()
+  useEffect(() => {
+    if (!dialogOpen || !userId) return
+
+    const fetchData = async () => {
+      try {
+        const data = await fetchuserDashboardList(
+          lastUsedMoodRef.current,
+          userId,
+          date
+        )
+        setTasksData(data)
+      } catch (error) {
+        console.error('Error fetching tasks:', error)
+      }
+    }
+
+    fetchData()
+  }, [date, dialogOpen, userId])
+
+  const columns = taskDashboardColumn()
 
   const { table } = useDataTable({
     data: TasksData || [],
@@ -366,13 +289,55 @@ export function UserDashboard () {
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className='max-w-screen overflow-auto lg:min-w-full lg:h-screen '>
-          <div className='bg-background text-foreground p-4 md:p-6'>
-            <div className='data-table-container w-full'>
-              <DataTable table={table}>
-                <DataTableToolbar table={table}>
-                  <DataTableSortList table={table} />
-                </DataTableToolbar>
-              </DataTable>
+          <div className='flex flex-col gap-4 lg:gap-6'>
+            {/* Top Bar: Date Range Picker */}
+            <div className='flex justify-between items-center'>
+              <div className='flex-shrink-0'>
+                <Popover modal={true}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant='outline'
+                      className={cn(
+                        'w-full lg:w-auto justify-start text-left font-normal',
+                        !date?.from && 'text-muted-foreground'
+                      )}
+                    >
+                      <CalendarIcon className='mr-2 h-4 w-4' />
+                      {date?.from ? (
+                        date.to ? (
+                          <>
+                            {format(date.from, 'LLL dd, y')} -{' '}
+                            {format(date.to, 'LLL dd, y')}
+                          </>
+                        ) : (
+                          format(date.from, 'LLL dd, y')
+                        )
+                      ) : (
+                        <span>Pick a date range</span>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className='w-auto p-0' align='start'>
+                    <Calendar
+                      mode='range'
+                      selected={date}
+                      onSelect={range => setDate(range)}
+                      numberOfMonths={2}
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
+            </div>
+
+            {/* Data Table Section */}
+            <div className='bg-background text-foreground w-full'>
+              <div className='data-table-container w-full'>
+                <DataTable table={table}>
+                  <DataTableToolbar table={table}>
+                    <DataTableSortList table={table} />
+                  </DataTableToolbar>
+                </DataTable>
+              </div>
             </div>
           </div>
         </DialogContent>

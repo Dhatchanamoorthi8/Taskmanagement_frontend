@@ -137,14 +137,12 @@ export function AppSidebar ({ currentUser }) {
                           </>
                         ) : (
                           <SidebarMenuButton asChild tooltip={item.title}>
-                            <Link href={item.url}>
-                              <item.icon
-                                style={{
-                                  height: '18px',
-                                  width: '18px'
-                                }}
-                              />
-                            </Link>
+                            <item.icon
+                              style={{
+                                height: '20px',
+                                width: '20px'
+                              }}
+                            />
                           </SidebarMenuButton>
                         )}
                       </SidebarMenuItem>

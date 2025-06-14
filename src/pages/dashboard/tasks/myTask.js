@@ -7,7 +7,6 @@ import { myallTask } from '@/services/taskService'
 import { DataTableToolbar } from '@/components/data-table/data-table-toolbar'
 import { parseAsArrayOf, parseAsString, useQueryState } from 'nuqs'
 import { DataTableSortList } from '@/components/data-table/data-table-sort-list'
-import { mytaskColumns } from './Table/mytaskColumns'
 import {
   Dialog,
   DialogContent,
@@ -19,6 +18,7 @@ import { MytaskForm } from '@/forms/taskForms/MytaskForm'
 import FullCalendar from '@/components/FullCalendar/calendar'
 import { Calendar1, Table2Icon } from 'lucide-react'
 import CustomToggle from '@/components/CustomToggle'
+import { mytaskColumns } from '@/components/data-columns/mytaskColumns'
 
 export default function MyTaskPage () {
   const { user } = useUser()

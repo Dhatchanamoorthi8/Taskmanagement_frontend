@@ -1,12 +1,16 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { columns } from './Table/columns'
-import { DataTable } from './Table/data-table'
 import { getallCompany } from '@/services/companyService'
+import { DataTable } from '@/components/data-table/data-table'
+import { DataTableToolbar } from '@/components/data-table/data-table-toolbar'
+import { DataTableSortList } from '@/components/data-table/data-table-sort-list'
+import { useDataTable } from '@/hooks/use-data-table'
+import { getcompanyColumns } from '@/components/data-columns/companyColumns'
 
 export default function ListCompanyPage () {
   const [data, setData] = useState([])
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -20,11 +24,25 @@ export default function ListCompanyPage () {
     fetchData()
   }, [])
 
+  const { table } = useDataTable({
+    data,
+    getcompanyColumns,
+    pageCount: 1,
+    initialState: {
+      sorting: [{ id: 'name', desc: true }],
+      columnPinning: { right: ['actions'] }
+    },
+    getRowId: row => row.id
+  })
 
   return (
-    <div className='flex justify-center bg-background text-foreground min-h-screen px-4 py-10 overflow-y-auto p-6'>
-      <div className='flex flex-col items-center w-full max-w-4xl space-y-6'>
-        <DataTable columns={columns} data={data} />
+    <div className='bg-background text-foreground p-4 md:p-6'>
+      <div className='data-table-container w-full p-2 md:p-4'>
+        <DataTable table={table}>
+          <DataTableToolbar table={table}>
+            <DataTableSortList table={table} />
+          </DataTableToolbar>
+        </DataTable>
       </div>
     </div>
   )

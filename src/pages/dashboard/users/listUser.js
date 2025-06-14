@@ -1,7 +1,6 @@
 'use client'
 import { useUser } from '@/lib/UserContext'
 import { useEffect, useMemo, useState } from 'react'
-import { getColumns } from './Table/columns'
 import { useRouter } from 'next/router'
 import {
   deleteUser,
@@ -15,6 +14,7 @@ import { DataTableToolbar } from '@/components/data-table/data-table-toolbar'
 import { DataTableSortList } from '@/components/data-table/data-table-sort-list'
 import { useDataTable } from '@/hooks/use-data-table'
 import { parseAsString, useQueryState } from 'nuqs'
+import { getuserColumns } from '@/components/data-columns/userColumns'
 
 export default function ListUserPage () {
   const { user } = useUser()
@@ -100,7 +100,7 @@ export default function ListUserPage () {
   const canEdit = hasPermission(currentUser, 'edit_user')
   const canDelete = hasPermission(currentUser, 'delete_user')
 
-  const columns = getColumns(
+  const columns = getuserColumns(
     router,
     canEdit,
     canDelete,

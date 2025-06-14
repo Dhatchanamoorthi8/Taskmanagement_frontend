@@ -1,5 +1,3 @@
-// columns.jsx or columns.tsx
-
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -10,39 +8,81 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import { format } from 'date-fns'
-import { ArrowUpDown, Edit, MoreHorizontal, Trash2 } from 'lucide-react'
+import {
+  ArrowUpDown,
+  Edit,
+  MoreHorizontal,
+  RefreshCcw,
+  Trash2
+} from 'lucide-react'
 
-export const getColumns = (
+export const getuserColumns = (
   router,
   canEdit,
   canDelete,
-  onDelete,
-  setDialogData
+  setDialogData,
+  handleChangeStatus
 ) => [
   {
     accessorKey: 'srno',
     header: 'Sr.No',
-    cell: ({ row }) => <div>{row.index + 1}</div>,
+    cell: ({ row }) => <div className='text-center'>{row.index + 1}</div>,
     enableSorting: false
   },
   {
-    accessorKey: 'name',
+    accessorKey: 'fullName',
     header: ({ column }) => (
       <Button
         variant='ghost'
         onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
       >
-        Role Name <ArrowUpDown className='ml-2 h-4 w-4' />
+        Full Name <ArrowUpDown className='ml-2 h-4 w-4' />
       </Button>
     ),
     cell: ({ cell }) => <div>{cell.getValue()}</div>,
     meta: {
-      label: 'Role Name',
-      placeholder: 'Search Role Name...',
+      label: 'fullName',
+      placeholder: 'Search fullName...',
       variant: 'text',
       icon: Text
     },
     enableColumnFilter: true,
+    enableSorting: true
+  },
+  {
+    accessorKey: 'phone',
+    header: ({ column }) => (
+      <Button
+        variant='ghost'
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+      >
+        Phone No <ArrowUpDown className='ml-2 h-4 w-4' />
+      </Button>
+    ),
+    enableSorting: true
+  },
+  {
+    accessorKey: 'email',
+    header: ({ column }) => (
+      <Button
+        variant='ghost'
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+      >
+        Email <ArrowUpDown className='ml-2 h-4 w-4' />
+      </Button>
+    ),
+    enableSorting: true
+  },
+  {
+    accessorKey: 'role',
+    header: ({ column }) => (
+      <Button
+        variant='ghost'
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+      >
+        Role <ArrowUpDown className='ml-2 h-4 w-4' />
+      </Button>
+    ),
     enableSorting: true
   },
   {
@@ -101,8 +141,7 @@ export const getColumns = (
     id: 'actions',
     enableHiding: false,
     cell: ({ row }) => {
-      const data = row.original
-
+      const user = row.original
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -115,12 +154,12 @@ export const getColumns = (
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
 
             <DropdownMenuItem
-              disabled={!canEdit}
               onClick={() => {
                 router.push(
-                  `/dashboard/roles/EditRole?id=${data.id}&companyId=${data.companyId}`
+                  `/dashboard/users/EditUser?id=${user.id}&companyId=${user.companyId}`
                 )
               }}
+              disabled={!canEdit}
             >
               <Edit className='mr-2 h-4 w-4' />
               Edit
@@ -128,15 +167,26 @@ export const getColumns = (
 
             <DropdownMenuItem
               onClick={() => {
+                handleChangeStatus(user)
+              }}
+              disabled={!canEdit}
+              className={user.isActive ? ' text-yellow-500' : 'text-green-500'}
+            >
+              <RefreshCcw className='mr-2 h-4 w-4' />
+              Change {user.isActive ? 'InActive' : 'Active'}
+            </DropdownMenuItem>
+
+            <DropdownMenuItem
+              onClick={() => {
                 setDialogData({
                   open: true,
-                  id: data.id,
-                  companyId: data.companyId,
-                  name: data.name
+                  id: user.id,
+                  companyId: user.companyId,
+                  name: user.fullName
                 })
               }}
-              disabled={!canDelete}
               className='text-red-600'
+              disabled={!canDelete}
             >
               <Trash2 className='mr-2 h-4 w-4' />
               Delete

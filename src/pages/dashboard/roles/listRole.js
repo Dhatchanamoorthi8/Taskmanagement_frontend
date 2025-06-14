@@ -1,7 +1,6 @@
 import { useUser } from '@/lib/UserContext'
 import { deleteRole, fetchRolelist } from '@/services/roleService'
 import { useEffect, useMemo, useState } from 'react'
-import { getColumns } from './Table/columns'
 import { useRouter } from 'next/router'
 import ConfirmDialog from '@/components/ConfirmDialog'
 import { toast } from 'sonner'
@@ -10,6 +9,7 @@ import { DataTableToolbar } from '@/components/data-table/data-table-toolbar'
 import { DataTableSortList } from '@/components/data-table/data-table-sort-list'
 import { parseAsString, useQueryState } from 'nuqs'
 import { useDataTable } from '@/hooks/use-data-table'
+import { getroleColumns } from '@/components/data-columns/roleColumns'
 
 export default function ListRolePage () {
   const { user } = useUser()
@@ -74,7 +74,7 @@ export default function ListRolePage () {
   const canEdit = hasPermission(currentUser, 'edit_role')
   const canDelete = hasPermission(currentUser, 'delete_role')
 
-  const columns = getColumns(
+  const columns = getroleColumns(
     router,
     canEdit,
     canDelete,

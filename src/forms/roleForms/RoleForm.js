@@ -101,7 +101,7 @@ export default function RoleForm ({ companyId, mode, currentUser, editroleid }) 
 
   useEffect(() => {
     handleRoleSelect(editroleid)
-  }, [editroleid, handleRoleSelect])
+  }, [editroleid])
 
   const handleRoleSelect = async roleId => {
     setSelectedRoleId(roleId)
