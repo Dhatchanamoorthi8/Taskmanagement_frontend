@@ -20,10 +20,11 @@ jobs:
       run: npm run build
 
     - name: Archive Production Files
+    - name: Archive Production Files
       run: |
-        mkdir prod
-        cp -r .next public package.json next.config.js prod/
-        # Add any other files needed to run app (e.g. .env.production)
+       mkdir prod
+       cp -r .next public package.json prod/
+
     
     - name: Copy Files to EC2
       uses: appleboy/scp-action@master
