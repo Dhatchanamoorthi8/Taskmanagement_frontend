@@ -16,13 +16,11 @@ jobs:
     - name: Install Dependencies
       run: npm install --legacy-peer-deps
 
-    - name: Verify Next.js Version
+    - name: Verify Installation
       run: npx next --version
 
     - name: Build the Application
-      run: |
-        echo "Disabling ESLint and increasing memory limit for build"
-        NODE_OPTIONS=--max_old_space_size=4096 NEXT_DISABLE_ESLINT=1 npm run build
+      run: npm run build
 
     - name: Deploy to EC2
       uses: appleboy/ssh-action@master
@@ -35,4 +33,3 @@ jobs:
           git pull origin main
           npm install --legacy-peer-deps
           npm run build
-          # Optional: Restart Nginx or PM2 here if needed
