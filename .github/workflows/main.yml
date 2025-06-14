@@ -30,6 +30,8 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
           cd ${{ secrets.FRONTEND_PATH }}
-          git pull origin main
+          git reset --hard HEAD      # Discard any local changes
+          git clean -fd              # Remove untracked files/directories
+          git pull origin main       # Now pull latest code safely
           npm install --legacy-peer-deps
           npm run build
