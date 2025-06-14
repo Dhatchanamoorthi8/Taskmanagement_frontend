@@ -1,8 +1,8 @@
 import { useRouter } from 'next/router'
-import { SettingsSideMenu } from '@/components/settingsSideMenu'
 import AppearanceSettingsPage from './Pages/AppearanceSettings'
 import ProfileSettingsPage from './Pages/ProfileSettings'
 import AccountSettingsPage from './Pages/AccountSettings'
+import { SettingsSideMenu } from '@/components/SettingsSideMenu'
 
 export default function SettingsPage () {
   const router = useRouter()
