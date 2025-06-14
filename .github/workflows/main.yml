@@ -30,7 +30,7 @@ jobs:
         host: ${{ secrets.SSH_HOST }}
         username: ${{ secrets.SSH_USER }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
-        source: "prod/*"
+        source: "prod"
         target: "${{ secrets.FRONTEND_PATH }}"
 
     - name: Run Deploy Script on EC2
